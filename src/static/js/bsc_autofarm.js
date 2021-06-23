@@ -35,7 +35,7 @@ async function main() {
     deathPoolIndices) {
     const chefContract = chef ?? new ethers.Contract(chefAddress, chefAbi, App.provider);
   
-    const poolCount = parseInt(await chefContract.poolLength(), 10);
+    const poolCount = 10; //parseInt(await chefContract.poolLength(), 10);
     const totalAllocPoints = await chefContract.totalAllocPoint();
   
     _print(`Found ${poolCount} pools.\n`)

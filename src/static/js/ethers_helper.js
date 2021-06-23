@@ -1622,6 +1622,37 @@ function printAPR(rewardTokenTicker, rewardPrice, poolRewardsPerWeek,
   }
 }
 
+function printHypotheticalAPY(rewardTokenTicker, rewardPrice, poolRewardsPerWeek, 
+                  stakeTokenTicker, staked_tvl, userStaked, poolTokenPrice,
+                  fixedDecimals) {
+  var usdPerWeek = poolRewardsPerWeek * rewardPrice;
+  fixedDecimals = fixedDecimals ?? 2;
+  _print(`${rewardTokenTicker} Per Week: ${poolRewardsPerWeek.toFixed(fixedDecimals)} ($${formatMoney(usdPerWeek)})`);
+  var weeklyAPR = usdPerWeek / staked_tvl * 100;
+  var dailyAPR = weeklyAPR / 7;
+  var yearlyAPR = weeklyAPR * 52;
+  _print(`APR: Day ${dailyAPR.toFixed(2)}% Week ${weeklyAPR.toFixed(2)}% Year ${yearlyAPR.toFixed(2)}%`);
+  var userStakedUsd = userStaked * poolTokenPrice;
+  var userStakedPct = userStakedUsd / staked_tvl * 100;
+  _print(`You are staking ${userStaked.toFixed(fixedDecimals)} ${stakeTokenTicker} ($${formatMoney(userStakedUsd)}), ${userStakedPct.toFixed(2)}% of the pool.`);
+  var userWeeklyRewards = userStakedPct * poolRewardsPerWeek / 100;
+  var userDailyRewards = userWeeklyRewards / 7;
+  var userYearlyRewards = userWeeklyRewards * 52;
+  if (userStaked > 0) {
+    _print(`Estimated ${rewardTokenTicker} earnings:`
+        + ` Day ${userDailyRewards.toFixed(fixedDecimals)} ($${formatMoney(userDailyRewards*rewardPrice)})`
+        + ` Week ${userWeeklyRewards.toFixed(fixedDecimals)} ($${formatMoney(userWeeklyRewards*rewardPrice)})`
+        + ` Year ${userYearlyRewards.toFixed(fixedDecimals)} ($${formatMoney(userYearlyRewards*rewardPrice)})`);
+  }
+  return { 
+    userStakedUsd, 
+    totalStakedUsd : staked_tvl, 
+    userStakedPct, 
+    yearlyAPR, 
+    userYearlyUsd : userYearlyRewards * rewardPrice 
+  }
+}
+
 function printChefContractLinks(App, chefAbi, chefAddr, poolIndex, poolAddress, pendingRewardsFunction,
     rewardTokenTicker, stakeTokenTicker, unstaked, userStaked, pendingRewardTokens, fixedDecimals,
     claimFunction, rewardTokenPrice) {
